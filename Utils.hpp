@@ -13,20 +13,29 @@ class Vector
         unsigned int    size;
     public:
         Vector();
-        Vector(N )
         ~Vector();
         Vector(Vector const &src);
         Vector  &operator=(Vector const &src);
 
         unsigned int    const getsize();
         void    printContent();
-
+        void    addValue();
 }
 
+template<typename N>
 class Matrix
 {
     private:
-
+        std::vector<std::vector<N>> values;
+        unsigned int    shape;
     public:
+        Matrix();
+        ~Matrix();
+        Matrix(Matrix const &src);
+        Matrix  &operator=(Matrix const &src);
 
+        unsigned int    const getshape();
+        bool    const   isSquare();
+        void    printContent() const;
+        void    addValue();
 }
