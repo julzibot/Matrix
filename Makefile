@@ -1,10 +1,10 @@
 NAME	= matrix
 
-CC		= c++ -Wall -Wextra -Werror -std=c++11
+CC		= c++ -Wall -Wextra -Werror
 
 RM		= rm -rf
 
-SRCS	= main.cpp Utils.tpp
+SRCS	= main.cpp
 
 OBJS	= ${SRCS:.c=.o}
 

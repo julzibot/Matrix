@@ -2,94 +2,150 @@
 
 #include "Utils.hpp"
 
+//*****   CONSTRUCTS, CPY, ASSIGN, DESTR   *****/
+
+/*  VEC  */
+
 template <typename N>
-Vector<N>::Vector() : values(new std::vector<N>), size(0)
+Vector<N>::Vector() : values{}, size(0)
 { std::cout << "empty vector created" << std::endl;}
 
 template <typename N>
-Vector<N>::Vector(std::string const &values)
+template <typename... Args>
+Vector<N>::Vector(Args... args) : values{static_cast<N>(args)...}, size(sizeof...(args)) 
+{}
+
+template <typename N>
+Vector<N>::Vector(Vector const &src) : values(src.values), size(src.size)
+{}
+
+template <typename N>
+Vector<N>  &Vector<N>::operator=(Vector<N> const &src)
 {
-    this->values = new std::vector<N>;
-    std::istringstream  input(values);
-    std::string buffer = "";
-    N typeNum;
-    double  num;
-    for (this->size = 0; input >> buffer; this->size++)
+    std::vector<N> cpy = src.getValues();
+    size_t size = cpy.size();
+    this->values = std::vector<N> (size);
+    for (size_t i = 0; i < size; i++)
+        this->values[i] = cpy[i];
+    this->size = size;
+    return (*this);
+}
+
+
+/*  MATRIX  */
+
+template <typename N>
+Matrix<N>::Matrix() : values{}
+{ 
+    this->shape[0] = 0;
+    this->shape[1] = 0;
+    std::cout << "empty matrix created" << std::endl;
+}
+
+template <typename N>
+template <typename... Args>
+Matrix<N>::Matrix(size_t columns, size_t rows, Args... args) : values{static_cast<N>(args)...}
+{
+    this->shape[0] = static_cast<size_t>(columns);
+    this->shape[1] = static_cast<size_t>(rows);
+
+    if (this->values.size() != this->shape[0] * this->shape[1])
     {
-        num = stod(buffer);
-        typeNum = static_cast<N>(num);
-        this->values.push(typeNum);
+        std::cout << "PROBLEM !" << std::endl;
+        return;
     }
 }
 
 template <typename N>
-Vector<N>::Vector(Vector const &src)
-{
-    std::vector<N> cpy = src.getValues;
-    this->values = new std::vector<N> (cpy.size);
-    for (int i = 0; i < cpy.size; i++)
-        this->values[i] = cpy[i];
-    this->size = cpy.size;
-}
+Matrix<N>::Matrix(Matrix const &src) : values(src.values), shape(src.shape)
+{}
 
 template <typename N>
-Vector<N>::~Vector()
-{ std::cout << "vector destroyed" << std::endl;}
-
-template <typename N>
-Vector<N>  &Vector<N>::operator=(Vector const &src)
+Matrix<N>  &Matrix<N>::operator=(Matrix<N> const &src)
 {
-    delete this->values;
-    std::vector<N> cpy = src.getValues;
-    this->values = new std::vector<N> (cpy.size);
-    for (int i = 0; i < cpy.size; i++)
+    std::vector<N> cpy = src.getValues();
+    size_t size = cpy.size();
+    this->values = std::vector<N> (size);
+    for (size_t i = 0; i < size; i++)
         this->values[i] = cpy[i];
-    this->size = cpy.size;
+    this->shape = src.getShape();
     return (*this);
 }
 
 template <typename N>
-unsigned int Vector<N>::getSize()
-{
-    return (this->size);
-}
+Matrix<N>::~Matrix()
+{ std::cout << "matrix destroyed" << std::endl;}
+
+
+//*****   GET/PRINT VALUES + SIZE/SHAPE   *****/
+
+/*  VEC  */
 
 template <typename N>
-void    Vector<N>::printValues()
+size_t Vector<N>::getSize() const
+{ return (this->size); }
+
+template <typename N>
+std::vector<N> const &Vector<N>::getValues() const
+{ return (this->values); }
+
+template <typename N>
+void    Vector<N>::printValues() const
 {
     std::cout << "vec: [";
-    for (int i = 0; i < this->values.size(); i++)
+    for (size_t i = 0; i < this->values.size(); i++)
     {
         std::cout << this->values[i];
         if (i < this->values.size() - 1)
-            std::cout << " ";
-        else
-            std::cout << "]" << std::endl;
+            std::cout << ", ";
     }
+    std::cout << "]" << std::endl;
 }
 
-// void    addValue();
+/*  MATRIX  */
 
 template <typename N>
-std::vector<N> const &Vector<N>::getValues()
+std::array<size_t, 2> Matrix<N>::getShape() const
+{ return (this->shape); }
+
+template <typename N>
+void    Matrix<N>::reshape(size_t columns, size_t rows)
 {
-    return (this->values);
+    if (columns * rows == this->values.size())
+    {
+        this->shape[0] = columns;
+        this->shape[1] = rows;
+    }
+    else
+        std::cout << "BAD SHAPE !" << std::endl;
 }
 
-// template<typename N>
-// class Matrix
-// {
-//     private:
-//         std::vector<std::vector<N>> values;
-//         unsigned int    shape;
-//     public:
-//         // Matrix();
-//         Matrix(std::string const &values);
-//         ~Matrix();
-//         Matrix(Matrix const &src);
-//         Matrix  &operator=(Matrix const &src);
+template <typename N>
+bool Matrix<N>::isSquare() const
+{
+    if (this->shape[0] == this->shape[1])
+        return true;
+    return false;
+}
 
-//         unsigned int    const getshape();
-//         bool    const   isSquare();
-//         void    printContent() const;
-// };
+template <typename N>
+std::vector<N> const &Matrix<N>::getValues() const
+{ return (this->values); }
+
+template <typename N>
+void    Matrix<N>::printValues() const
+{
+    std::cout << "mat: |";
+    size_t j = 0;
+    for (size_t i = 0; i < this->shape[1]; i++)
+    {
+        if (i > 0) std::cout << "     |";
+        for (j = 0; j < this->shape[0]; j++)
+        {
+            std::cout << this->values[i * this->shape[0] + j];
+            if (j < this->shape[0] - 1)
+                std::cout << " ";
+        }
+        std::cout << "|" << std::endl;
+    }
+}
