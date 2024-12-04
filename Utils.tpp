@@ -77,6 +77,9 @@ Matrix<N>::~Matrix()
 { std::cout << "matrix destroyed" << std::endl;}
 
 
+
+
+
 //*****   GET/PRINT VALUES + SIZE/SHAPE   *****/
 
 /*  VEC  */
@@ -103,6 +106,10 @@ void    Vector<N>::printValues() const
 }
 
 /*  MATRIX  */
+
+template <typename N>
+size_t Matrix<N>::getSize() const
+{ return (this->values.size()); }
 
 template <typename N>
 std::array<size_t, 2> Matrix<N>::getShape() const

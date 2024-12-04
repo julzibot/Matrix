@@ -43,6 +43,7 @@ class Matrix
 
         ~Matrix();
 
+        size_t  getSize() const;
         std::array<size_t, 2>  getShape() const;
         void    reshape(size_t columns, size_t rows);
         std::vector<N> const &getValues() const;
