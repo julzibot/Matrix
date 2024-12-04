@@ -8,15 +8,22 @@
 
 template <typename N>
 Vector<N>::Vector() : values{}, size(0)
-{ std::cout << "empty vector created" << std::endl;}
+{
+    this->shape[0] = 0;
+    this->shape[1] = 0; 
+    std::cout << "empty vector created" << std::endl;
+}
 
 template <typename N>
 template <typename... Args>
 Vector<N>::Vector(Args... args) : values{static_cast<N>(args)...}, size(sizeof...(args)) 
-{}
+{
+    this->shape[0] = this->size;
+    this->shape[1] = 1;
+}
 
 template <typename N>
-Vector<N>::Vector(Vector const &src) : values(src.values), size(src.size)
+Vector<N>::Vector(Vector const &src) : values(src.values), size(src.size), shape(src.shape)
 {}
 
 template <typename N>
@@ -30,6 +37,10 @@ Vector<N>  &Vector<N>::operator=(Vector<N> const &src)
     this->size = size;
     return (*this);
 }
+
+template <typename N>
+Vector<N>::~Vector()
+{ std::cout << "vector destroyed" << std::endl;}
 
 
 /*  MATRIX  */
@@ -89,8 +100,16 @@ size_t Vector<N>::getSize() const
 { return (this->size); }
 
 template <typename N>
+std::array<size_t, 2> Vector<N>::getShape() const
+{ return (this->shape); }
+
+template <typename N>
 std::vector<N> const &Vector<N>::getValues() const
 { return (this->values); }
+
+template <typename N>
+void    Vector<N>::setValues(std::vector<N> const &src)
+{ this->values = std::vector<N>(src); }
 
 template <typename N>
 void    Vector<N>::printValues() const
@@ -138,6 +157,10 @@ bool Matrix<N>::isSquare() const
 template <typename N>
 std::vector<N> const &Matrix<N>::getValues() const
 { return (this->values); }
+
+template <typename N>
+void    Matrix<N>::setValues(std::vector<N> const &src)
+{ this->values = std::vector<N>(src); }
 
 template <typename N>
 void    Matrix<N>::printValues() const

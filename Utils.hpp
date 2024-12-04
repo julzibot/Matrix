@@ -11,7 +11,9 @@ class Vector
     private:
         std::vector<N> values;
         size_t    size;
+        std::array<size_t, 2> shape;
     public:
+        using ValueType = N;
         Vector();
         template <typename... Args>
         Vector(Args... args);
@@ -22,10 +24,11 @@ class Vector
         ~Vector();
 
         size_t  getSize() const;
+        std::array<size_t, 2>  getShape() const;
         std::vector<N> const &getValues() const;
+        void    setValues(std::vector<N> const &src);
         void    printValues() const;
 };
-
 
 template <typename N>
 class Matrix
@@ -34,6 +37,7 @@ class Matrix
         std::vector<N> values;
         std::array<size_t, 2> shape;
     public:
+        using ValueType = N;
         Matrix();
         template <typename... Args>
         Matrix(size_t columns, size_t rows, Args... args);
@@ -47,6 +51,7 @@ class Matrix
         std::array<size_t, 2>  getShape() const;
         void    reshape(size_t columns, size_t rows);
         std::vector<N> const &getValues() const;
+        void    setValues(std::vector<N> const &src);
         bool    isSquare() const;
         void    printValues() const;
 };
