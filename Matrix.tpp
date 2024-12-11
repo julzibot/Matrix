@@ -305,6 +305,7 @@ Matrix<N>    Matrix<N>::row_echelon()
 {
     Matrix<N>   ret(*this);
     ret.order_ref();
+    // sort rows to get "staircase" form
     
     N rowPivot;
     N rowCombinationFactor;
@@ -318,6 +319,7 @@ Matrix<N>    Matrix<N>::row_echelon()
         rowPivot = 0;
         for (size_t j = pivotIndex; j < this->shape[1]; j++)
         {
+            // in each row i, normalize values
             if (rowPivot == 0 && values[i * this->shape[1] + j] != 0)
             {
                 rowPivot = values[i * this->shape[1] + j];
@@ -328,6 +330,7 @@ Matrix<N>    Matrix<N>::row_echelon()
         }
         for (size_t k = 0; k < this->shape[0]; k++)
         {
+            // once j row is normalized, combine other rows with j row where necessary so that j pivot column is 0 except at j 
             if (k != i && values[k * this->shape[1] + pivotIndex] != 0 && rowPivot != 0)
             {
                 rowCombinationFactor = values[k * this->shape[1] + pivotIndex];
@@ -337,6 +340,7 @@ Matrix<N>    Matrix<N>::row_echelon()
         }
         ret.setValues(values);
         reordered_mat = ret.order_ref();
+        // sort the matrix again in case its shape after transformation is not a staircase anymore
         // std::cout << "------" << std::endl;
         // ret.printValues();
 
@@ -363,8 +367,10 @@ N Matrix<N>::determinant()
     std::vector<N>  tempValues((dim - 1) * (dim - 1), 0);
     Matrix<N> tempMatrix(dim - 1, dim - 1, tempValues);
     size_t   column_offset;
+    // i: iterate on columns only (first row)
     for (size_t i = 0; i < dim; i++)
     {
+        // m, n: iterate again through the values to build a sub-matrix
         for (size_t m = 1; m < dim; m++)
         {
             column_offset = 0;
@@ -378,6 +384,7 @@ N Matrix<N>::determinant()
         }
         tempMatrix.setValues(tempValues);
         // tempMatrix.printValues();
+        // recursively call the method on each sub-matrix created, until reaching 2x2 shape
         det += this->values[i] * tempMatrix.determinant() * fact;
         // std::cout << "DET: " << det << std::endl << "----";
         fact *= -1;
@@ -403,12 +410,14 @@ Matrix<N>    Matrix<N>::inverse()
     std::vector<N>  retValues(dim * dim, 0);
     std::vector<N>  tempValues((dim - 1) * (dim - 1), 0);
     Matrix<N> tempMatrix(dim - 1, dim - 1, tempValues);
+    // i, j: iterating through the matrix
     for (size_t i = 0; i < dim; i++)
     {
         for (size_t j = 0; j < dim; j++)
         {
             factor = 1;
             row_offset = 0;
+            // m, n: for each ij value, iterate again through the values to build a sub-matrix and get its det
             for (size_t m = 0; m < dim; m++)
             {
                 if (m == i)
