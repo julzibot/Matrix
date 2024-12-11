@@ -345,7 +345,7 @@ Matrix<N>    Matrix<N>::row_echelon()
 }
 
 
-//*****   TRANSPOSE   *****/
+//*****   DETERMINANT   *****/
 
 template <typename N>
 N Matrix<N>::determinant()
@@ -355,7 +355,32 @@ N Matrix<N>::determinant()
         std::cout << "PROBLEM !" << std::endl;
         return 0;
     }
+    N det = 0;
     size_t dim = this->shape[0];
-
-    
+    if (dim == 2)
+        return std::fma(values[0], values[3], -values[2] * values[1]);
+    N fact = 1;
+    std::vector<N>  tempValues((dim - 1) * (dim - 1), 0);
+    Matrix<N> tempMatrix(dim - 1, dim - 1, tempValues);
+    size_t   column_offset;
+    for (size_t i = 0; i < dim; i++)
+    {
+        for (size_t m = 1; m < dim; m++)
+        {
+            column_offset = 0;
+            for (size_t n = 0; n < dim; n++)
+            {
+                if (n == i)
+                    column_offset = 1;
+                else
+                    tempValues[std::fma(m - 1, dim - 1, n - column_offset)] = this->values[std::fma(m, dim, n)];
+            }
+        }
+        tempMatrix.setValues(tempValues);
+        tempMatrix.printValues();
+        det += this->values[i] * tempMatrix.determinant() * fact;
+        // std::cout << "DET: " << det << std::endl << "----";
+        fact *= -1;
+    }
+    return det;
 }
