@@ -54,6 +54,7 @@ class Matrix
         Matrix<N>    row_echelon();
         N determinant();
         Matrix<N>    inverse();
+        size_t rank();
 };
 
 #include "Matrix.tpp"

@@ -447,3 +447,26 @@ Matrix<N>    Matrix<N>::inverse()
     ret.scl(1 / det);
     return ret;
 }
+
+//*****   RANK   *****/
+
+template <typename N>
+size_t    Matrix<N>::rank()
+{
+    Matrix<N> ref = (*this).row_echelon();
+    std::vector<N> values = ref.getValues();
+    ref.printValues();
+    size_t rank = 0;
+    for (size_t i = 0; i < this->shape[0]; i++)
+    {
+        for (size_t j = 0; j < this->shape[1]; j++)
+        {
+            if (values[i * this->shape[1] + j] != 0)
+            {
+                rank++;
+                break;
+            }   
+        }
+    }
+    return rank;
+}
