@@ -53,6 +53,7 @@ class Matrix
         bool    order_ref();
         Matrix<N>    row_echelon();
         N determinant();
+        Matrix<N>    inverse();
 };
 
 #include "Matrix.tpp"

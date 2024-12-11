@@ -377,10 +377,64 @@ N Matrix<N>::determinant()
             }
         }
         tempMatrix.setValues(tempValues);
-        tempMatrix.printValues();
+        // tempMatrix.printValues();
         det += this->values[i] * tempMatrix.determinant() * fact;
         // std::cout << "DET: " << det << std::endl << "----";
         fact *= -1;
     }
     return det;
+}
+
+//*****   INVERSE   *****/
+
+template <typename N>
+Matrix<N>    Matrix<N>::inverse()
+{
+    if (this->shape[0] != this->shape[1])
+    {
+        std::cout << "PROBLEM !" << std::endl;
+        return *this;
+    }
+    size_t dim = this->shape[0];
+    N det = (*this).determinant();
+    N factor;
+    size_t   column_offset;
+    size_t   row_offset;
+    std::vector<N>  retValues(dim * dim, 0);
+    std::vector<N>  tempValues((dim - 1) * (dim - 1), 0);
+    Matrix<N> tempMatrix(dim - 1, dim - 1, tempValues);
+    for (size_t i = 0; i < dim; i++)
+    {
+        for (size_t j = 0; j < dim; j++)
+        {
+            factor = 1;
+            row_offset = 0;
+            for (size_t m = 0; m < dim; m++)
+            {
+                if (m == i)
+                    row_offset = 1;
+                else
+                {
+                    column_offset = 0;
+                    for (size_t n = 0; n < dim; n++)
+                    {
+                        if (n == j)
+                            column_offset = 1;
+                        else
+                            tempValues[std::fma(m - row_offset, dim - 1, n - column_offset)] = this->values[std::fma(m, dim, n)];
+                    }
+                }
+            }
+            tempMatrix.setValues(tempValues);
+            tempMatrix.printValues();
+            if ((i + j) % 2)
+                factor = -1;
+            retValues[std::fma(i, dim, j)] = factor * tempMatrix.determinant();
+        }
+    }
+
+    Matrix<N> ret(dim, dim, retValues);
+    ret.transpose();
+    ret.scl(1 / det);
+    return ret;
 }
