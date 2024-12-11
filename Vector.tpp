@@ -49,7 +49,9 @@ N  &Vector<N>::operator[](size_t const i)
 
 template <typename N>
 Vector<N>::~Vector()
-{ std::cout << "vector destroyed" << std::endl;}
+{
+    // std::cout << "vector destroyed" << std::endl;
+}
 
 
 //*****   GET/PRINT VALUES + SIZE/SHAPE   *****/
@@ -125,19 +127,16 @@ void   Vector<N>::scl(N const &scalar)
 //*****   DOT   *****/
 
 template <typename N>
-N dot_recursive_fma(Vector<N> const &u, Vector<N> const &v, size_t coord)
-{
-    if (coord == u.getSize() - 1)
-        return u.getValues()[coord] * v.getValues()[coord];
-    else
-        return std::fma(u.getValues()[coord], v.getValues()[coord], dot_recursive_fma(u, v, coord + 1));
-}
-
-template <typename N>
 N   Vector<N>::dot(Vector<N> const &obj)
 {
     if (obj.getSize() == this->size)
-        return dot_recursive_fma(*this, obj, 0);
+    {
+        N ret = 0;
+        std::vector<N> objValues = obj.getValues();
+        for (size_t i = 0; i < this->size; i++)
+            ret = std::fma(this->values[i], objValues[i], ret);
+        return ret;
+    }
     else
     {
         std::cout << "PROBLEM" << std::endl;

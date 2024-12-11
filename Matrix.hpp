@@ -5,6 +5,9 @@
 #include <string>
 #include <array>
 #include <cmath>
+#include "Vector.hpp"
+
+// class Vector;
 
 template <typename N>
 class Matrix
@@ -18,7 +21,8 @@ class Matrix
         Matrix();
 
         template <typename... Args>
-        Matrix(size_t columns, size_t rows, Args... args);
+        Matrix(size_t rows, size_t columns, Args... args);
+        Matrix(size_t rows, size_t columns, std::vector<N> values);
 
         Matrix(Matrix const &src);
         Matrix  &operator=(Matrix const &src);
@@ -28,8 +32,11 @@ class Matrix
 
         size_t  getSize() const;
         std::array<size_t, 2>  getShape() const;
-        void    reshape(size_t columns, size_t rows);
+        void    reshape(size_t rows, size_t columns);
         std::vector<N> const &getValues() const;
+        Vector<N>   getRow(size_t j);
+        Vector<N>   getCol(size_t k);
+
         void    setValues(std::vector<N> const &src);
         bool    isSquare() const;
         void    printValues() const;
@@ -37,6 +44,15 @@ class Matrix
         void   add(Matrix const &obj);
         void   sub(Matrix const &obj);
         void   scl(N const &scalar);
+
+        Vector<N>   mul_vec(Vector<N> vec);
+        Matrix<N>   mul_mat(Matrix<N> mat);
+        N   trace();
+        
+        void    transpose();
+        bool    order_ref();
+        Matrix<N>    row_echelon();
+        N determinant();
 };
 
 #include "Matrix.tpp"

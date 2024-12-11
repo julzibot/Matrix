@@ -5,6 +5,7 @@
 #include <string>
 #include <array>
 #include <cmath>
+#include <algorithm>
 
 template <typename N>
 class Vector
@@ -12,7 +13,6 @@ class Vector
     private:
         std::vector<N> values;
         size_t    size;
-        // std::array<size_t, 2> shape;
     public:
         using ValueType = N;
         Vector();
