@@ -7,8 +7,6 @@
 template <typename N>
 Vector<N>::Vector() : values{}, size(0)
 {
-    this->shape[0] = 0;
-    this->shape[1] = 0; 
     std::cout << "empty vector created" << std::endl;
 }
 
@@ -99,7 +97,7 @@ void   Vector<N>::add(Vector<N> const &obj)
             this->values[i] += values[i];
     }
     else
-        std::cout << "PROBLEM" << std::endl;
+        std::cerr << "Error: add: Vector sizes do not match" << std::endl;
 }
 
 template <typename N>
@@ -113,7 +111,7 @@ void   Vector<N>::sub(Vector<N> const &obj)
             this->values[i] -= values[i];
     }
     else
-        std::cout << "PROBLEM" << std::endl;
+        std::cerr << "Error: sub: Vector sizes do not match" << std::endl;
 }
 
 template <typename N>
@@ -139,7 +137,7 @@ N   Vector<N>::dot(Vector<N> const &obj)
     }
     else
     {
-        std::cout << "PROBLEM" << std::endl;
+        std::cerr << "Error: dot: Vector sizes do not match" << std::endl;
         return static_cast<N>(0);
     }
 }

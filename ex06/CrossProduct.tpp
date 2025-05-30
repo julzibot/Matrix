@@ -7,7 +7,10 @@ Vector<N>   cross_product(Vector<N> const &u, Vector<N> const &v)
 {
     Vector<N>   ret(u);
     if (u.getSize() != 3 || v.getSize() != 3)
+    {
+        std::cerr << "Error: cross product: wrong Vector dimensions" << std::endl;
         return ret;
+    }
     std::vector<N> uValues = u.getValues();
     std::vector<N> vValues = v.getValues();
     ret[0] = std::fma(uValues[1], vValues[2], -uValues[2] * vValues[1]);
