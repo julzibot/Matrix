@@ -7,6 +7,12 @@ Vector<N>   linear_combination(std::vector<Vector<N>> const &vecs, std::vector<N
 {
     size_t vecSize = vecs[0].getSize();
     Vector<N> ret(std::vector<N>(vecSize, 0));
+    for (size_t j = 0; j < vecs.size(); j++)
+    {
+        if (vecs[j].getSize() != vecSize)
+            throw std::out_of_range("Error: LinearCombination: Vector sizes are not equal");
+    }
+
     size_t j;
     for (size_t i = 0; i < vecSize; i++)
     {

@@ -23,10 +23,7 @@ Matrix<N>::Matrix(size_t rows, size_t columns, Args... args) : values{static_cas
     this->size = this->values.size();
 
     if (this->size != this->shape[0] * this->shape[1])
-    {
-        std::cout << "PROBLEM !" << std::endl;
-        return;
-    }
+        throw std::invalid_argument("Error: Matrix conctructor: size and shape do not match");
 }
 
 template <typename N>
@@ -37,10 +34,7 @@ Matrix<N>::Matrix(size_t rows, size_t columns, std::vector<N> values) : values{v
     this->size = this->values.size();
 
     if (this->size != this->shape[0] * this->shape[1])
-    {
-        std::cout << "PROBLEM !" << std::endl;
-        return;
-    }
+        throw std::invalid_argument("Error: Matrix conctructor: size and shape do not match");
 }
 
 template <typename N>
@@ -63,9 +57,9 @@ template <typename N>
 N  &Matrix<N>::operator[](size_t const i)
 {
     if (!this->size)
-        std::cout << "Error: empty array" << std::endl;
+        throw std::out_of_range("Error: trying to access empty Matrix array");
     else if (i > this->size - 1)
-        std::cout << "Error: out of bounds" << std::endl;
+        throw std::out_of_range("Error: trying to access out of bounds Matrix array value");
     return (this->values[i]);
 }
 
@@ -95,7 +89,7 @@ void    Matrix<N>::reshape(size_t rows, size_t columns)
         this->shape[1] = columns;
     }
     else
-        std::cout << "BAD SHAPE !" << std::endl;
+        throw std::invalid_argument("Error: Matrix reshape: shape does not match size");
 }
 
 template <typename N>
@@ -165,7 +159,7 @@ void   Matrix<N>::add(Matrix<N> const &obj)
             this->values[i] += values[i];
     }
     else
-        std::cout << "PROBLEM" << std::endl;
+        throw std::invalid_argument("Error: Matrix add: Matrix sizes do not match");
 }
 
 template <typename N>
@@ -179,7 +173,7 @@ void   Matrix<N>::sub(Matrix<N> const &obj)
             this->values[i] -= values[i];
     }
     else
-        std::cout << "PROBLEM" << std::endl;
+        throw std::invalid_argument("Error: Matrix sub: Matrix sizes do not match");
 }
 
 template <typename N>
@@ -196,7 +190,7 @@ Vector<N>   Matrix<N>::mul_vec(Vector<N> vec)
 {
     if (vec.getSize() != this->shape[1])
     {
-        std::cout << "PROBLEM !" << std::endl;
+        throw std::invalid_argument("Error: Matrix mul_vec: Vector and Matrix dimensions do not match");
         return Vector<N>(values);
     }
     size_t vecSize = this->shape[0];
@@ -212,7 +206,7 @@ Matrix<N>   Matrix<N>::mul_mat(Matrix<N> mat)
 {
     if (mat.getShape()[0] != this->shape[1])
     {
-        std::cout << "PROBLEM !" << std::endl;
+        throw std::invalid_argument("Error: Matrix mul_mat: Matrixes dimensions do not match");
         return Matrix<N>(*this);
     }
     size_t size = this->shape[0] * mat.getShape()[1];
@@ -244,7 +238,7 @@ N   Matrix<N>::trace()
     }
     else
     {
-        std::cout << "PROBLEM !" << std::endl;
+        throw std::invalid_argument("Error: Matrix trace: Matrix is not square");
         return 0;
     }
 }
@@ -348,7 +342,6 @@ Matrix<N>    Matrix<N>::row_echelon()
     return ret;
 }
 
-
 //*****   DETERMINANT   *****/
 
 template <typename N>
@@ -356,7 +349,7 @@ N Matrix<N>::determinant()
 {
     if (this->shape[0] != this->shape[1])
     {
-        std::cout << "PROBLEM !" << std::endl;
+        throw std::invalid_argument("Error: det: Matrix is not square");
         return 0;
     }
     N det = 0;
@@ -398,12 +391,11 @@ template <typename N>
 Matrix<N>    Matrix<N>::inverse()
 {
     if (this->shape[0] != this->shape[1])
-    {
-        std::cout << "PROBLEM !" << std::endl;
-        return *this;
-    }
+        throw std::invalid_argument("Error: inverse: Matrix is not square");
     size_t dim = this->shape[0];
     N det = (*this).determinant();
+    if (!det)
+        throw std::invalid_argument("Error: inverse: Matrix is not invertible");
     N factor;
     size_t   column_offset;
     size_t   row_offset;
@@ -435,10 +427,11 @@ Matrix<N>    Matrix<N>::inverse()
                 }
             }
             tempMatrix.setValues(tempValues);
-            tempMatrix.printValues();
-            if ((i + j) % 2)
-                factor = -1;
-            retValues[std::fma(i, dim, j)] = factor * tempMatrix.determinant();
+            // tempMatrix.printValues();
+            int index = std::fma(i, dim, j);
+            retValues[index] = tempMatrix.determinant();
+            if (retValues[index] != 0 && (i + j) % 2)
+                retValues[index] *= -1;
         }
     }
 

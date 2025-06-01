@@ -8,7 +8,7 @@ Vector<N>   cross_product(Vector<N> const &u, Vector<N> const &v)
     Vector<N>   ret(u);
     if (u.getSize() != 3 || v.getSize() != 3)
     {
-        std::cerr << "Error: cross product: wrong Vector dimensions" << std::endl;
+        throw std::out_of_range("Error: cross product: wrong Vector dimensions");
         return ret;
     }
     std::vector<N> uValues = u.getValues();

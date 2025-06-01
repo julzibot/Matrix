@@ -38,10 +38,8 @@ Vector<N>  &Vector<N>::operator=(Vector<N> const &src)
 template <typename N>
 N  &Vector<N>::operator[](size_t const i)
 {
-    if (!this->size)
-        std::cout << "Error: empty array" << std::endl;
-    else if (i > this->size - 1)
-        std::cout << "Error: out of bounds" << std::endl;
+    if (!this->size || i > this->size - 1)
+        throw std::out_of_range("Error: Out of bounds access to Vector values");
     return (this->values[i]);
 }
 
@@ -97,7 +95,7 @@ void   Vector<N>::add(Vector<N> const &obj)
             this->values[i] += values[i];
     }
     else
-        std::cerr << "Error: add: Vector sizes do not match" << std::endl;
+        throw std::out_of_range("Error: add: Vector sizes do not match");
 }
 
 template <typename N>
@@ -111,7 +109,7 @@ void   Vector<N>::sub(Vector<N> const &obj)
             this->values[i] -= values[i];
     }
     else
-        std::cerr << "Error: sub: Vector sizes do not match" << std::endl;
+        throw std::out_of_range("Error: sub: Vector sizes do not match");
 }
 
 template <typename N>
@@ -137,7 +135,7 @@ N   Vector<N>::dot(Vector<N> const &obj)
     }
     else
     {
-        std::cerr << "Error: dot: Vector sizes do not match" << std::endl;
+        throw std::out_of_range("Error: dot: Vector sizes do not match");
         return static_cast<N>(0);
     }
 }

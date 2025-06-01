@@ -18,10 +18,7 @@ Vector<N>   lerp(Vector<N> const &u, Vector<N> const &v, double const &t)
     size_t  size = uValues.size();
     Vector<N> ret(u);
     if (vValues.size() != size)
-    {
-        std::cerr << "Error: lerp: Vector sizes do not match" << std::endl;
-        return ret;
-    }
+        throw std::out_of_range("Error: lerp: Vector sizes do not match");
 
     for (size_t i = 0; i < size; i++)
         ret[i] = std::fma(vValues[i] - uValues[i], t, uValues[i]);
@@ -38,10 +35,7 @@ Matrix<N>   lerp(Matrix<N> const &u, Matrix<N> const &v, double const &t)
     size_t  size = uValues.size();
     Matrix<N> ret(u);
     if (vValues.size() != size || u.getShape() != v.getShape())
-    {
-        std::cerr << "Error: lerp: Matrix dimensions do not match" << std::endl;
-        return ret;
-    }
+        throw std::out_of_range("Error: lerp: Matrix dimensions do not match");
 
     for (size_t i = 0; i < size; i++)
         ret[i] = std::fma(vValues[i] - uValues[i], t, uValues[i]);
